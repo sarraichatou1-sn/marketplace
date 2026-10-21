@@ -1,35 +1,54 @@
 import Annonce from "./components/Annonce"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { supabase } from "./supabase"
 
-const articlesDepart= [
-  {id:1, titre:"Robe ohPolly", prix:15000, ville:"Dakar"},
-  {id:2, titre:"Set Lululemon", prix:8000, ville:"Thies"},
-  {id:3, titre:"Basket numeris", prix:15000, ville:"Dakar"},
-  {id:4, titre:"jean ZARA", prix:10000, ville:"Mbour"},
-]
+
 function App() {
-  const [articles, setArticles] = useState(articlesDepart)
+  const [articles, setArticles] = useState([])
   const [ville, SetVille] = useState ("Toutes")
   const [recherche, SetRecherche] = useState ("")
   const [nouveauTitre, setNouveauTitre] = useState("")
   const [nouveauPrix, setNouveauPrix] = useState("")
   const [nouvelleVille, setNouvelleVille] = useState("Dakar")
 
+  useEffect(() => {
+    async function charger() {
+      const {data,error} = await supabase
+        .from ('annonces')
+        .select ('*')
+        .order('created_at', {ascending:false})
+      if (error) console.log(error)
+      else setArticles(data)
+  
+    }
+    charger()
+
+  },[])  
+
   const articlesFiltres = articles.filter((a) =>
     (ville === "Toutes" || a.ville === ville) &&
     a.titre.toLowerCase().includes(recherche.toLowerCase())
   )
-  function publier() {
-  const article = {
-    id: Date.now(),
-    titre: nouveauTitre,
-    prix: Number(nouveauPrix),
-    ville: nouvelleVille,
+  async function publier() {
+  const {data,error} = await supabase
+    .from ('annonces')
+    .insert({
+      titre: nouveauTitre,
+      prix: Number(nouveauPrix),
+      ville: nouvelleVille,
+    })
+    .select()
+    .single()
+  if (error) {
+      console.log(error)
+      return
   }
-  setArticles([article, ...articles])
+    
+  
+  setArticles([data, ...articles])
   setNouveauTitre("")
   setNouveauPrix("")
-}
+  }
 
 
   return (
@@ -60,6 +79,7 @@ function App() {
       value={recherche}
       onChange={(e) => SetRecherche(e.target.value)}
       />
+
 
       <select value={ville} onChange={(e) => SetVille(e.target.value)}>
         <option>Toutes</option>
