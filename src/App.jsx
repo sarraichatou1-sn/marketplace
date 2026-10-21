@@ -1,6 +1,7 @@
 import Annonce from "./components/Annonce"
 import { useEffect, useState } from "react"
 import { supabase } from "./supabase"
+import Auth from "./components/Auth"
 
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
   const [nouveauTitre, setNouveauTitre] = useState("")
   const [nouveauPrix, setNouveauPrix] = useState("")
   const [nouvelleVille, setNouvelleVille] = useState("Dakar")
+  const [session, setSession] = useState(null)
 
   useEffect(() => {
     async function charger() {
@@ -25,6 +27,16 @@ function App() {
 
   },[])  
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => data.subscription.unsubscribe()
+  }, [])
+
   const articlesFiltres = articles.filter((a) =>
     (ville === "Toutes" || a.ville === ville) &&
     a.titre.toLowerCase().includes(recherche.toLowerCase())
@@ -36,6 +48,7 @@ function App() {
       titre: nouveauTitre,
       prix: Number(nouveauPrix),
       ville: nouvelleVille,
+      user_id: session.user.id,
     })
     .select()
     .single()
@@ -43,6 +56,7 @@ function App() {
       console.log(error)
       return
   }
+
     
   
   setArticles([data, ...articles])
@@ -55,24 +69,37 @@ function App() {
     <div>
       <h1>Sasap</h1>
       <p>Bienvenue sur ma marketplace</p>
-      <h2>Publier une annonce</h2>
-      <input
-      placeholder="Titre"
-      value={nouveauTitre}
-      onChange={(e) => setNouveauTitre(e.target.value)}
-      />
-      <input
-      placeholder="Prix"
-      type="number"
-      value={nouveauPrix}
-      onChange={(e) => setNouveauPrix(e.target.value)}
-      />
-      <select value={nouvelleVille} onChange={(e) => setNouvelleVille(e.target.value)}>
-        <option>Dakar</option>
-        <option>Mbour</option>
-        <option>Thies</option>
-      </select>
-      <button onClick={publier}>Publier</button>
+      {session ? (
+        <div>
+          <p>Connecte : {session.user.email}</p>
+          <button onClick={() => supabase.auth.signOut()}>Se deconnecter</button>
+        </div>
+      ) : (
+        <Auth />
+      )}
+      {session && (
+        <div>
+          <h2>Publier une annonce</h2>
+            <input
+            placeholder="Titre"
+            value={nouveauTitre}
+            onChange={(e) => setNouveauTitre(e.target.value)}
+            />
+            <input
+              placeholder="Prix"
+              type="number"
+              value={nouveauPrix}
+            onChange={(e) => setNouveauPrix(e.target.value)}
+            />
+            <select value={nouvelleVille} onChange={(e) => setNouvelleVille(e.target.value)}>
+              <option>Dakar</option>
+              <option>Mbour</option>
+              <option>Thies</option>
+            </select>
+            <button onClick={publier}>Publier</button>
+        </div>
+      )}
+
     
       <input 
       placeholder="Rechercher un article..."
