@@ -12,6 +12,7 @@ function App() {
   const [nouveauPrix, setNouveauPrix] = useState("")
   const [nouvelleVille, setNouvelleVille] = useState("Dakar")
   const [session, setSession] = useState(null)
+  const [photo, setPhoto] = useState(null)
 
   useEffect(() => {
     async function charger() {
@@ -42,6 +43,20 @@ function App() {
     a.titre.toLowerCase().includes(recherche.toLowerCase())
   )
   async function publier() {
+
+    let imageUrl = null
+    if (photo) {
+      const extension = photo.name.split('.').pop()
+      const nomFichier = `${session.user.id}/${Date.now()}.${extension}`
+      const { error: erreurPhoto } = await supabase.storage
+        .from('photos')
+        .upload(nomFichier, photo)
+      if (erreurPhoto) {
+        console.log(erreurPhoto)
+        return
+      }
+      imageUrl = supabase.storage.from('photos').getPublicUrl(nomFichier).data.publicUrl
+    }
   const {data,error} = await supabase
     .from ('annonces')
     .insert({
@@ -49,6 +64,7 @@ function App() {
       prix: Number(nouveauPrix),
       ville: nouvelleVille,
       user_id: session.user.id,
+      image_url: imageUrl,
     })
     .select()
     .single()
@@ -62,6 +78,7 @@ function App() {
   setArticles([data, ...articles])
   setNouveauTitre("")
   setNouveauPrix("")
+  setPhoto(null)
   }
 
 
@@ -96,6 +113,11 @@ function App() {
               <option>Mbour</option>
               <option>Thies</option>
             </select>
+            <input 
+              type="file"
+              accept="image/*"
+              onChange={(e) => setPhoto(e.target.files[0])}
+             />
             <button onClick={publier}>Publier</button>
         </div>
       )}
@@ -116,7 +138,7 @@ function App() {
       </select>
 
       {articlesFiltres.map((a) => (
-        <Annonce key={a.id} titre={a.titre} prix={a.prix} ville={a.ville} />
+        <Annonce key={a.id} titre={a.titre} prix={a.prix} ville={a.ville} image={a.image_url} />
       ))}
     </div>
   )
