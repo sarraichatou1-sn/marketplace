@@ -4,6 +4,7 @@ import { supabase } from "./supabase"
 import Auth from "./components/Auth"
 import './App.css'
 import { NavLink, Routes, Route} from "react-router-dom"
+import Detail from "./components/Detail"
 
 function App() {
   const [articles, setArticles] = useState([])
@@ -93,7 +94,7 @@ function App() {
   const grille = (
     <div className="grille">
       {articlesFiltres.map((a) => (
-        <Annonce key={a.id} titre={a.titre} prix={a.prix} ville={a.ville} image={a.image_url} estMienne={session && a.user_id === session.user.id} onSupprimer={() => supprimer(a.id)} />
+        <Annonce key={a.id} titre={a.titre} prix={a.prix} ville={a.ville} image={a.image_url} estMienne={session && a.user_id === session.user.id} onSupprimer={() => supprimer(a.id)} id={a.id} />
       ))}
     </div>
   )
@@ -111,6 +112,7 @@ function App() {
       </nav>
       </header>
       <Routes>
+
         <Route path="/" element={
           <>
             <section className="hero">
@@ -126,6 +128,7 @@ function App() {
           </>
         }>
         </Route>
+        <Route path="/article/:id" element={<Detail />} />
         <Route path="/articles" element={
           <>
             <div className="recherche">
