@@ -127,7 +127,7 @@ function App() {
 
       </section>
       {session ? (
-        <div>
+        <div className="formulaire">
           <p>Connecte : {session.user.email}</p>
           <button onClick={() => supabase.auth.signOut()}>Se deconnecter</button>
         </div>
@@ -135,7 +135,7 @@ function App() {
         <Auth />
       )}
       {session && (
-        <div>
+        <div className="formulaire">
           <h2>Publier une annonce</h2>
             <input
             placeholder="Titre"
@@ -169,6 +169,25 @@ function App() {
         <Annonce key={a.id} titre={a.titre} prix={a.prix} ville={a.ville} image={a.image_url} estMienne={session && a.user_id === session.user.id} onSupprimer={() => supprimer(a.id)} />
         ))}
       </div>
+
+      <footer className="pied">
+      <div>
+        <strong>SaSaP Sn</strong>
+        <p>Solou akk sa poche. La mode qui respecte votre poche.</p>
+        <p>Sénégal-Dakar</p>
+      </div>
+      <div>
+        <h4>Marketplace</h4>
+        <p>Parcourir</p>
+        <p>Vendre</p>
+        <p>Offre Pro</p>
+      </div>
+      <div>
+        <h4>Aide</h4>
+        <p>Moyens de paiement</p>
+        <p>Sécurité et confiance</p>
+      </div>
+      </footer>
 
     </div>
   )

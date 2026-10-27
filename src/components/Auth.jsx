@@ -22,7 +22,7 @@ function Auth() {
     }
 
     return(
-        <div>
+        <div className="formulaire">
             <h2>Connexion</h2>
             <input
                 placeholder="Email"
