@@ -1,10 +1,11 @@
 function Annonce(props) {
     return(
-        <div>
+        <div className="carte">
             {props.image && <img src={props.image} width="200" />}
             <h3>{props.titre}</h3>
-            <h3>{props.prix}FCFA</h3>
-            <h3>{props.ville}</h3>
+            <p className="prix">{props.prix}FCFA</p>
+            <p className="ville">{props.ville}</p>
+            {props.estMienne && <button onClick={props.onSupprimer}>Supprimer</button>}
         </div>
     )
 }

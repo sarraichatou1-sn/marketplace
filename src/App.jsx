@@ -2,7 +2,7 @@ import Annonce from "./components/Annonce"
 import { useEffect, useState } from "react"
 import { supabase } from "./supabase"
 import Auth from "./components/Auth"
-
+import './App.css'
 
 function App() {
   const [articles, setArticles] = useState([])
@@ -80,12 +80,52 @@ function App() {
   setNouveauPrix("")
   setPhoto(null)
   }
-
+  async function supprimer(id) {
+    const { error } = await supabase.from('annonces').delete().eq('id', id)
+    if (error) {
+      console.log(error)
+      return
+    }
+    setArticles(articles.filter((a) => a.id !== id))
+  }
 
   return (
     <div>
-      <h1>Sasap</h1>
-      <p>Bienvenue sur ma marketplace</p>
+      <header className="entete">
+      <img src="/logo.png" alt="SaSaP" className="logo" />
+      <nav>
+        <a className="actif">Accueil</a>
+        <a>Articles</a>
+        <a>Vendre</a>
+        <a>Pro</a>
+        <a>Messagerie</a>
+      </nav>
+      </header>
+      <section className="hero">
+        <h1>
+          Solou akk <span>sa poche</span>
+        </h1>
+        <p>
+          La mode qui respecte votre poche. Achète, vends et donne une seconde vie
+          à tes vêtements, chaussures et sacs.
+        </p>
+
+        <div className="recherche">
+          <input 
+          placeholder="Rechercher un article..."
+          value={recherche}
+          onChange={(e) => SetRecherche(e.target.value)}
+          />
+
+          <select value={ville} onChange={(e) => SetVille(e.target.value)}>
+            <option>Toutes</option>
+            <option>Dakar</option>
+            <option>Mbour</option>
+            <option>Thies</option>
+          </select>
+        </div>
+
+      </section>
       {session ? (
         <div>
           <p>Connecte : {session.user.email}</p>
@@ -123,23 +163,13 @@ function App() {
       )}
 
     
-      <input 
-      placeholder="Rechercher un article..."
-      value={recherche}
-      onChange={(e) => SetRecherche(e.target.value)}
-      />
 
+      <div className="grille">
+        {articlesFiltres.map((a) => (
+        <Annonce key={a.id} titre={a.titre} prix={a.prix} ville={a.ville} image={a.image_url} estMienne={session && a.user_id === session.user.id} onSupprimer={() => supprimer(a.id)} />
+        ))}
+      </div>
 
-      <select value={ville} onChange={(e) => SetVille(e.target.value)}>
-        <option>Toutes</option>
-        <option>Dakar</option>
-        <option>Mbour</option>
-        <option>Thies</option>
-      </select>
-
-      {articlesFiltres.map((a) => (
-        <Annonce key={a.id} titre={a.titre} prix={a.prix} ville={a.ville} image={a.image_url} />
-      ))}
     </div>
   )
 }
