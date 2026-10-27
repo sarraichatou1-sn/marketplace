@@ -22,7 +22,7 @@ nav a {
   cursor: pointer;
 }
 
-nav a.actif {
+nav a.active {
   background: var(--noir);
   color: white;
 }
@@ -143,4 +143,9 @@ nav a.actif {
   margin: 6px 0;
   font-size: 14px;
   opacity: 0.85;
+}
+
+.page {
+  text-align: center;
+  padding: 80px 20px;
 }
