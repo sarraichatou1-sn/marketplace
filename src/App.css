@@ -180,3 +180,22 @@ nav a.active {
     grid-template-columns: 1fr;
   }
 }
+
+.badge {
+  display: inline-block;
+  background: var(--rouge);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.avantages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}

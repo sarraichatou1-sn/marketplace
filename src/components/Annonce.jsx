@@ -5,6 +5,7 @@ function Annonce(props) {
             <Link to={`/article/${props.id}`}>
                 {props.image && <img src={props.image} width="200" />}
                 <h3>{props.titre}</h3>
+                {props.pro && <span className="badge">✓ Pro</span>}
             </Link>
             <p className="prix">{props.prix}FCFA</p>
             <p className="ville">{props.ville}</p>

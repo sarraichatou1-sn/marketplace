@@ -5,6 +5,8 @@ import Auth from "./components/Auth"
 import './App.css'
 import { NavLink, Routes, Route} from "react-router-dom"
 import Detail from "./components/Detail"
+import Commandes from "./components/Commandes"
+import Pro from "./components/Pro"
 
 function App() {
   const [articles, setArticles] = useState([])
@@ -15,6 +17,7 @@ function App() {
   const [nouvelleVille, setNouvelleVille] = useState("Dakar")
   const [session, setSession] = useState(null)
   const [photo, setPhoto] = useState(null)
+  const [proIds, setProIds] = useState([])
 
   useEffect(() => {
     async function charger() {
@@ -40,9 +43,21 @@ function App() {
     return () => data.subscription.unsubscribe()
   }, [])
 
-  const articlesFiltres = articles.filter((a) =>
+  useEffect(() => {
+  async function chargerPros() {
+    const { data } = await supabase.from('profils').select('id').eq('pro', true)
+    if (data) setProIds(data.map((p) => p.id))
+  }
+  chargerPros()
+}, [])
+
+const articlesFiltres = articles
+  .filter((a) =>
     (ville === "Toutes" || a.ville === ville) &&
     a.titre.toLowerCase().includes(recherche.toLowerCase())
+  )
+  .sort((a, b) =>
+    Number(proIds.includes(b.user_id)) - Number(proIds.includes(a.user_id))
   )
   async function publier() {
 
@@ -94,7 +109,7 @@ function App() {
   const grille = (
     <div className="grille">
       {articlesFiltres.map((a) => (
-        <Annonce key={a.id} titre={a.titre} prix={a.prix} ville={a.ville} image={a.image_url} estMienne={session && a.user_id === session.user.id} onSupprimer={() => supprimer(a.id)} id={a.id} />
+        <Annonce key={a.id} titre={a.titre} prix={a.prix} ville={a.ville} image={a.image_url} estMienne={session && a.user_id === session.user.id} onSupprimer={() => supprimer(a.id)} id={a.id} pro={proIds.includes(a.user_id)} />
       ))}
     </div>
   )
@@ -109,6 +124,7 @@ function App() {
         <NavLink to="/vendre">Vendre</NavLink>
         <NavLink to="/pro">Pro</NavLink>
         <NavLink to="/messagerie">Messagerie</NavLink>
+        <NavLink to="/commandes">Mes commandes</NavLink>
       </nav>
       </header>
       <Routes>
@@ -191,7 +207,8 @@ function App() {
           </>
 
         } />
-        <Route path="/pro" element={<h2 className="page">Offre Pro : bientôt disponible</h2>} />
+        <Route path="/commandes" element={<Commandes />} />
+        <Route path="/pro" element={<Pro />} />
         <Route path="/messagerie" element={<h2 className="page">Messagerie : bientôt disponible</h2>} />
       </Routes>
 
