@@ -16,10 +16,17 @@ nav {
 }
 
 nav a {
+  text-decoration: none;
+  color: var(--noir);
   padding: 8px 18px;
   border-radius: 999px;
   font-weight: 500;
-  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.2s;
+}
+
+nav a:hover {
+  background: var(--gris);
 }
 
 nav a.active {
@@ -198,4 +205,51 @@ nav a.active {
   max-width: 900px;
   margin: 0 auto;
   padding: 0 20px;
+}
+
+@media (max-width: 800px) {
+  .entete {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  nav a {
+    padding: 6px 14px;
+    font-size: 14px;
+    border: 1px solid var(--gris);
+  }
+
+  .hero h1 {
+    font-size: 34px;
+  }
+
+  .grille {
+    padding: 20px 16px 40px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .carte img {
+    height: 180px;
+  }
+
+  .recherche {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .recherche input {
+    width: 90%;
+  }
+
+  .pied {
+    flex-direction: column;
+    padding: 24px 16px;
+  }
 }
