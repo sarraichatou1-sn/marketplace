@@ -6,6 +6,8 @@ function Dons() {
   const [collecteId, setCollecteId] = useState("")
   const [texte, setTexte] = useState("")
   const [message, setMessage] = useState("")
+  const [mesDons, setMesDons] = useState([])
+  const [recompenses, setRecompenses] = useState([])
 
   useEffect(() => {
     async function charger() {
@@ -19,6 +21,7 @@ function Dons() {
       }
     }
     charger()
+    chargerMesDonnees()
   }, [])
 
   async function donner() {
@@ -36,8 +39,18 @@ function Dons() {
     else {
       setMessage("Merci pour ton don !")
       setTexte("")
+      chargerMesDonnees()
     }
   }
+
+  async function chargerMesDonnees() {
+    const { data: d } = await supabase
+        .from('dons').select('*').order('created_at', { ascending: false })
+    const { data: r } = await supabase
+        .from('recompenses').select('*').order('created_at', { ascending: false })
+    if (d) setMesDons(d)
+    if (r) setRecompenses(r)
+}
 
   return (
     <div>
@@ -71,6 +84,19 @@ function Dons() {
         />
         <button onClick={donner}>Je donne</button>
         <p>{message}</p>
+      </div>
+
+      <div className="formulaire">
+        <h2>Mes dons</h2>
+        {mesDons.length === 0 && <p>Aucun don pour l'instant.</p>}
+        {mesDons.map((d) => (
+            <p key={d.id}>{d.description} ({d.statut})</p>
+        ))}
+        <h2>Mes récompenses</h2>
+        {recompenses.length === 0 && <p>Aucune récompense pour l'instant.</p>}
+        {recompenses.map((r) => (
+            <p key={r.id}>🎁 {r.description} {r.utilisee ? "(utilisée)" : ""}</p>
+        ))}
       </div>
     </div>
   )
