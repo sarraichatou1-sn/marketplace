@@ -7,6 +7,7 @@ import { NavLink, Routes, Route} from "react-router-dom"
 import Detail from "./components/Detail"
 import Commandes from "./components/Commandes"
 import Pro from "./components/Pro"
+import Dons from "./components/Dons"
 
 function App() {
   const [articles, setArticles] = useState([])
@@ -125,6 +126,7 @@ const articlesFiltres = articles
         <NavLink to="/pro">Pro</NavLink>
         <NavLink to="/messagerie">Messagerie</NavLink>
         <NavLink to="/commandes">Mes commandes</NavLink>
+        <NavLink to="/dons">Dons</NavLink>
       </nav>
       </header>
       <Routes>
@@ -209,6 +211,7 @@ const articlesFiltres = articles
         } />
         <Route path="/commandes" element={<Commandes />} />
         <Route path="/pro" element={<Pro />} />
+        <Route path="/dons" element={<Dons />}></Route>
         <Route path="/messagerie" element={<h2 className="page">Messagerie : bientôt disponible</h2>} />
       </Routes>
 

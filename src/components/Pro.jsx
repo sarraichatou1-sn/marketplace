@@ -46,7 +46,7 @@ function Pro() {
         <h2>Demander l'offre Pro</h2>
         <p>Prix de l'abonnement : à venir.</p>
         <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="vendeur">Je suis vendeur/vendeuse</option>
+          <option value="vendeur">Je suis vendeur/vendeuse </option>
           <option value="marque">Je suis une marque</option>
         </select>
         <input
