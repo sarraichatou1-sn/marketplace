@@ -7,6 +7,8 @@ function Detail() {
   const { id } = useParams()
   const [article, setArticle] = useState(null)
   const [message, setMessage] = useState("")
+  const [texteMessage, setTexteMessage] = useState("")
+  const [info, setInfo] = useState("")
 
   useEffect(() => {
     async function charger() {
@@ -38,6 +40,33 @@ function Detail() {
   setMessage(error ? error.message : "Commande enregistrée !")
   }
 
+  async function contacter() {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    setInfo("Connecte-toi d'abord (page Vendre).")
+    return
+  }
+  if (!article.user_id) {
+    setInfo("Ce vendeur n'est pas joignable.")
+    return
+  }
+  if (user.id === article.user_id) {
+    setInfo("C'est ton annonce.")
+    return
+  }
+  const { error } = await supabase.from('messages').insert({
+    annonce_id: article.id,
+    expediteur_id: user.id,
+    destinataire_id: article.user_id,
+    texte: texteMessage,
+  })
+  if (error) setInfo(error.message)
+  else {
+    setInfo("Message envoyé !")
+    setTexteMessage("")
+  }
+}
+
   return (
     <div className="detail">
       {article.image_url && <img src={article.image_url} />}
@@ -48,6 +77,13 @@ function Detail() {
         <p><strong>Total : {article.prix + calculerFrais(article.prix)} FCFA</strong></p>
         <p>{article.ville}</p>
         <button onClick={acheter}>Acheter</button>
+        <input
+          placeholder="Écris au vendeur..."
+          value={texteMessage}
+          onChange={(e) => setTexteMessage(e.target.value)}
+        />
+        <button onClick={contacter}>Contacter le vendeur</button>
+        <p>{info}</p>
         <p>{message}</p>
         <p><Link to="/articles">← Retour aux articles</Link></p>
       </div>

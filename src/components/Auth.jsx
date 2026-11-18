@@ -5,11 +5,13 @@ function Auth() {
     const [email, setEmail]=useState("")
     const [motDePasse, setMotDePasse]=useState("")
     const [message, setMessage]=useState("")
+    const [pseudo, setPseudo] = useState("")
 
     async function inscrire() {
-        const {error} = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
             email,
             password: motDePasse,
+            options: { data: { pseudo } },
         })
         setMessage(error ? error.message : "Compte créé !")
     }
@@ -24,6 +26,11 @@ function Auth() {
     return(
         <div className="formulaire">
             <h2>Connexion</h2>
+            <input
+                placeholder="Pseudo (pour t'inscrire)"
+                value={pseudo}
+                onChange={(e) => setPseudo(e.target.value)}
+            />
             <input
                 placeholder="Email"
                 value={email}

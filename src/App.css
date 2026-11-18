@@ -253,3 +253,11 @@ nav a.active {
     padding: 24px 16px;
   }
 }
+
+.deconnexion {
+  background: transparent;
+  color: var(--noir);
+  border: 1px solid var(--noir);
+  padding: 8px 16px;
+  font-size: 14px;
+}
