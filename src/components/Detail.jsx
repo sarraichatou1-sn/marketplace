@@ -9,6 +9,7 @@ function Detail() {
   const [message, setMessage] = useState("")
   const [texteMessage, setTexteMessage] = useState("")
   const [info, setInfo] = useState("")
+  const [vendeur, setVendeur] = useState("")
 
   useEffect(() => {
     async function charger() {
@@ -18,7 +19,17 @@ function Detail() {
         .eq('id', id)
         .single()
       if (error) console.log(error)
-      else setArticle(data)
+      else {
+        setArticle(data)
+        if (data.user_id) {
+          const { data: membre } = await supabase
+            .from('membres')
+            .select('pseudo')
+            .eq('id', data.user_id)
+            .single()
+          if (membre) setVendeur(membre.pseudo)
+        }
+      }
     }
     charger()
   }, [id])
@@ -76,6 +87,7 @@ function Detail() {
         <p>Frais de service : {calculerFrais(article.prix)} FCFA</p>
         <p><strong>Total : {article.prix + calculerFrais(article.prix)} FCFA</strong></p>
         <p>{article.ville}</p>
+        {vendeur && <p>Vendu par <strong>{vendeur}</strong></p>}
         <button onClick={acheter}>Acheter</button>
         <input
           placeholder="Écris au vendeur..."
